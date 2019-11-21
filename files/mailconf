@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+SYSADMIN="rs@seastrom.com, 7036220001@vtext.com"
+
+APCUPSD_MAIL="heirloom-mailx -v -A seastromhmail"
+

@@ -1,0 +1,68 @@
+---
+
+  - name: apcupsd latest
+    apt: name=apcupsd state=latest
+
+#  - lineinfile:
+#      path: /etc/apcupsd/apccontrol
+#      line:  "       /etc/apcupsd/commfailure"
+#      insertafter: "Warning communications lost with UPS"
+
+  - file: dest=/etc/apcupsd state=directory owner=root group=root mode=0755
+
+  - name: checking for host custom apcupsd.conf
+    local_action:
+      module: stat
+      path: "{{ host_specific_files }}/apcupsd.conf"
+    register: ac
+
+  - name: host-custom apcupsd.conf
+    copy: src={{ host_specific_files }}/apcupsd.conf dest=/etc/apcupsd owner=root group=root mode=0664
+    when: ac.stat.islnk is defined
+
+
+#  - copy: src=apcupsd.conf dest=/etc/apcupsd owner=root group=unbound mode=0664
+
+#  - copy: src=changeme dest=/etc/apcupsd owner=root group=unbound mode=0664
+
+#  - copy: src=commfailure dest=/etc/apcupsd owner=root group=unbound mode=0755
+
+#  - copy: src=commok dest=/etc/apcupsd owner=root group=unbound mode=0755
+
+#  - copy: src=hosts.conf dest=/etc/apcupsd owner=root group=unbound mode=0664
+
+#  - copy: src=killpower dest=/etc/apcupsd owner=root group=unbound mode=0755
+
+#  - copy: src=mailconf dest=/etc/apcupsd owner=root group=unbound mode=0755
+
+#  - copy: src=multimon.conf dest=/etc/apcupsd owner=root group=unbound mode=0664
+
+#  - copy: src=offbattery dest=/etc/apcupsd owner=root group=unbound mode=0755
+
+#  - copy: src=onbattery dest=/etc/apcupsd owner=root group=unbound mode=0755
+
+#  - copy: src=ups-monitor dest=/etc/apcupsd owner=root group=unbound mode=0755
+
+# old package gone, now just install s-nail directly
+#  - name: heirloom-mailx latest
+#    apt: name=heirloom-mailx state=latest
+
+  - name: installing s-nail latest
+    apt: name=s-nail state=latest
+
+  - name: checking for host custom s-nail.rc
+    local_action:
+      module: stat
+      path: "{{ host_specific_files }}/s-nail.rc"
+    register: sn
+
+  - name: host-custom s-nail.rc
+    copy: src={{ host_specific_files }}/s-nail.rc dest=/etc owner=root group=root mode=0664
+    when: sn.stat.islnk is defined
+
+#  - copy: src=s-nail.rc dest=/etc/ owner=root group=root mode=0644
+
+  - systemd: name=apcupsd.service  enabled=yes state=restarted
+
+
+...
